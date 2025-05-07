@@ -5,6 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Demo Àudio i Vídeo</title>
+    <style>
+        /* Estils per a la manipulació dels subtítols */
+        video::cue {
+            color: white;           /* Canviar el color del text */
+            background-color: rgba(0, 0, 0, 0.6);  /* Fons fosc semitransparent */
+            font-size: 1.5em;        /* Mida de la font */
+            font-family: Arial, sans-serif; /* Tipus de lletra */
+        }
+    </style>
 </head>
 <body>
     <audio controls>
@@ -17,10 +26,10 @@
         is licensed under <a rel="nofollow" class="external text" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">Attribution-NonCommercial-NoDerivatives 4.0 International License</a>
     </div>
     <hr>
-    <!-- L'etiqueta <video> també accepta varies propietats: height, width, autoplay... 
+    <!-- L'etiqueta <video> també accepta diverses propietats: height, width, autoplay... 
          poster permet establir un fons per quan no el vídeo no s'està reproduint.
     -->
-    <video controls>
+    <video id="videoElement" controls poster="path/to/your-image.jpg">
         <!-- podem tenir diversos formats. El repoductor escollirà el primer que reconegui. -->
         <source src="media/metro.mp4" type="video/mp4">
         <source src="media/metro.ogg" type="video/ogg">
@@ -34,5 +43,32 @@
         <track src="media/captions/metro-es.vtt" label="Espanyol" kind="captions" srclang="es">
         El teu navegador no suporta l'element HTML vídeo.
     </video>
+
+    <!-- Afegeix un botó SVG per capturar el fotograma del vídeo -->
+    <svg id="captureButton" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="50" height="50">
+        <circle cx="50" cy="50" r="40" stroke="black" stroke-width="4" fill="white" />
+        <text x="50" y="55" font-size="20" text-anchor="middle" fill="black">Captura</text>
+    </svg>
+
+    <!-- Canvas per mostrar el fotograma capturat -->
+    <canvas id="canvas" width="640" height="360" style="border: 1px solid black;"></canvas>
+
+    <script>
+        const video = document.getElementById('videoElement');
+        const captureButton = document.getElementById('captureButton');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Event listener per capturar el fotograma quan es fa clic al botó
+        captureButton.addEventListener('click', function() {
+            // Dibuixar el fotograma actual del vídeo al canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Aplicar un filtre de blanc i negre
+            ctx.filter = 'grayscale(100%)';
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            ctx.filter = 'none';  // Restablir el filtre
+        });
+    </script>
 </body>
 </html>
